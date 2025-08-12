@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Liked Songs Playlist Sync</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #282828;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 100%;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            background-color: #404040;
+            color: white;
+            font-size: 16px;
+        }
+        button {
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #1ed760;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success { background-color: #1DB954; }
+        .error { background-color: #E61E32; }
+        #authSection { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spotify Liked Songs Playlist Sync</h1>
+        <div class="form-group">
+            <label for="playlist_id">Enter Playlist ID:</label>
+            <input type="text" id="playlist_id" required>
+            <button onclick="startAuth()">Get Authorization</button>
+        </div>
+
+        <div id="authSection" class="form-group">
+            <label for="auth_code">Authorization Code:</label>
+            <input type="text" id="auth_code" placeholder="Paste authorization code here">
+            <button onclick="processAuth()">Complete Sync</button>
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function startAuth() {
+            const playlistId = document.getElementById('playlist_id').value;
+            if (!playlistId) {
+                alert('Please enter a playlist ID');
+                return;
+            }
+
+            const response = await fetch('/authorize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `playlist_id=${playlistId}`
+            });
+            const data = await response.json();
+            
+            // Open authorization URL in new window
+            window.open(data.auth_url, '_blank');
+            
+            // Show auth code section
+            document.getElementById('authSection').style.display = 'block';
+        }
+
+        async function processAuth() {
+
+            const authCode = document.getElementById('auth_code').value;
+            const statusDiv = document.getElementById('status');
+            const button = document.querySelector('#authSection button');
+            
+            if (!authCode) {
+                alert('Please enter the authorization code');
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Processing...';
+            statusDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ auth_code: authCode })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.className = 'success';
+                    statusDiv.innerHTML = `
+                        Success!<br>
+                        Total Execution Time: ${data.execution_time}<br>
+                        ${data.message}
+                    `;
+                } else {
+                    statusDiv.className = 'error';
+                    statusDiv.textContent = data.error || 'An error occurred';
+                }
+            } catch (error) {
+                statusDiv.className = 'error';
+                statusDiv.textContent = 'Network error occurred';
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Complete Sync';
+        }
+    </script>
+</body>
+</html>
