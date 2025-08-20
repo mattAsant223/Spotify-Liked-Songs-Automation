@@ -23,7 +23,7 @@ def authorize():
     query = {
         "client_id": CLIENT_ID,
         "response_type": "code",
-        "redirect_uri": "http://localhost:5000/callback",
+        "redirect_uri": "https://open.spotify.com",
         "scope": "user-library-read playlist-modify-public playlist-modify-private"
     }
     auth_url = "https://accounts.spotify.com/authorize?" + urlencode(query)
@@ -52,7 +52,7 @@ def process():
         body = {
             "grant_type": "authorization_code",
             "code": auth_code,
-            "redirect_uri": "http://localhost:5000/callback",
+            "redirect_uri": "https://open.spotify.com",
         }
 
         response = requests.post(url, headers=headers, data=body)
