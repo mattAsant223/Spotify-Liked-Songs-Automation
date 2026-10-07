@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Liked Songs Playlist Sync</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Spotify Liked Songs Playlist Sync</h1>
+        {% if error %}
+        <div id="status" class="error">{{ error }}</div>
+        {% else %}
+        <div id="status" class="pending">
+            Syncing your liked songs&hellip;<br>
+            <span class="hint">This can take a minute for large libraries.</span>
+        </div>
+        {% endif %}
+        <a class="button secondary" href="{{ url_for('index') }}">Back</a>
+    </div>
+
+    {% if not error %}
+    <script>
+        async function runSync() {
+            const statusDiv = document.getElementById('status');
+            try {
+                const response = await fetch('{{ url_for("sync") }}', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    statusDiv.className = 'success';
+                    statusDiv.innerHTML = `
+                        Success!<br>
+                        Total Execution Time: ${data.execution_time}<br>
+                        ${data.message}<br>
+                        <a href="${data.playlist_url}" target="_blank">Open playlist in Spotify</a>
+                    `;
+                } else {
+                    statusDiv.className = 'error';
+                    statusDiv.textContent = data.error || 'An error occurred';
+                }
+            } catch (error) {
+                statusDiv.className = 'error';
+                statusDiv.textContent = 'Network error occurred';
+            }
+        }
+        runSync();
+    </script>
+    {% endif %}
+</body>
+</html>
