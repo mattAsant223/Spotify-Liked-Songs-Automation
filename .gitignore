@@ -1,0 +1,9 @@
+# Secrets
+.env
+Liked_Songs_Secret.py
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

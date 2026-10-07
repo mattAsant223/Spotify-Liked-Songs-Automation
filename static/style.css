@@ -1,0 +1,72 @@
+body {
+    font-family: -apple-system, system-ui, BlinkMacSystemFont;
+    background-color: #121212;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.container {
+    background-color: #282828;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 100%;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+}
+.form-group label.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    background-color: #404040;
+    color: white;
+    font-size: 16px;
+}
+button, .button {
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    background-color: #1DB954;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 10px;
+}
+button:hover, .button:hover {
+    background-color: #1ed760;
+}
+.button.secondary {
+    background-color: #404040;
+}
+#status {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 4px;
+}
+#status a { color: white; }
+.pending { background-color: #404040; }
+.success { background-color: #1DB954; }
+.error { background-color: #E61E32; }
+.hint { color: #b3b3b3; font-size: 14px; }
